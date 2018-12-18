@@ -1,15 +1,13 @@
 package org.duh102.duhbot.quoteplugin;
 
-import java.io.*;
 import java.util.*;
-import java.net.*;
 
 import org.pircbotx.hooks.*;
 import org.pircbotx.hooks.events.*;
 
 import org.duh102.duhbot.functions.*;
 
-public class QuotePlugin extends ListenerAdapter implements DuhbotFunction
+public class QuotePlugin extends ListenerAdapter implements ListeningPlugin
 {
   static QDBMinder minder = null;
   static {
@@ -25,9 +23,9 @@ public class QuotePlugin extends ListenerAdapter implements DuhbotFunction
   {
     return this;
   }
-  public HashMap<String,String> getHelpFunctions()
+  public Map<String,String> getHelpFunctions()
   {
-    HashMap<String,String> helpFunctions = new HashMap<String,String>();
+    Map<String,String> helpFunctions = new HashMap<String,String>();
     helpFunctions.put(".quote", "read random quote");
     helpFunctions.put(".quote all", "read random quote from all channels");
     helpFunctions.put(".quote x", "read specific quote");

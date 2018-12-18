@@ -1,6 +1,5 @@
 package org.duh102.duhbot.quoteplugin;
 
-import java.sql.Timestamp;
 
 public class Quote
 {
