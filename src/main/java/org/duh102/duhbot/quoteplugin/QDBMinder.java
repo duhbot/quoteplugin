@@ -57,4 +57,6 @@ public class QDBMinder
   {
     QuoteDB.createTables();
   }
+  public synchronized  Quote getLastQuote(String channel, String server) { return QuoteDB.getLastQuote(channel); }
+  public synchronized  Quote getLastQuote() { return QuoteDB.getLastQuote(null); }
 }
