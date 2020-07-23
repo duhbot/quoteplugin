@@ -215,6 +215,27 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                         respond(event, "Too short of a string to search for!");
                     }
                     break;
+                case ("pick"):
+                    if (parts.length < 3) {
+                        respond(event, ".quote search requires a query");
+                        return;
+                    }
+                    if (parts[2].length() > 1) {
+                        ArrayList<Integer> listQuotes = minder.searchQuote(parts, channel, server);
+                        if (listQuotes != null) {
+                            if (listQuotes.size() > 0) {
+                                quote = minder.getQuote(listQuotes[new Random().nextInt(listQuotes.size())], channel, server);
+                                respond(event, "#" + quote.getQuoteID() + " | Submitted: " + quote.getAuthor() + " | Date: " + quote.getTimestamp().toString());
+                                respond(event, "" + quote.getQuote());
+                            } else {
+                                respond(event, "No quotes matched your parameters.");
+                            }
+                        } else {
+                            respond(event, "Could not list quotes!");
+                        }
+                    } else {
+                        respond(event, "Too short of a string to search for!");
+                    }
                 case ("last"):
                     if (parts.length > 2 && parts[2].equalsIgnoreCase("all")) {
                         quote = minder.getLastQuote();
