@@ -26,13 +26,14 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
         Map<String, String> helpFunctions = new HashMap<String, String>();
         helpFunctions.put(".quote", "read random quote");
         helpFunctions.put(".quote all", "read random quote from all channels");
-        helpFunctions.put(".quote x", "read specific quote");
+        helpFunctions.put(".quote [x]", "read specific quote");
         helpFunctions.put(".quote add [quote]", "add a quote");
         helpFunctions.put(".quote total", "return number of quotes");
         helpFunctions.put(".quote authortotal [author]", "return number of quotes from that author");
         helpFunctions.put(".quote authorlist (author)", "return a list of all authors in the DB or all quotes by a specific author");
         helpFunctions.put(".quote search [query]", "search for quotes, a & b would search for quotes with both a and b");
         helpFunctions.put(".quote find [query]", "search for quotes, a & b would search for quotes with both a and b");
+        helpFunctions.put(".quote pick [query]", "like search, but immediately outputs a random quote from the search results");
         helpFunctions.put(".quote last", "read the most recent quote");
         helpFunctions.put(".quote last all", "read the most recent quote from all channels");
 
@@ -217,14 +218,14 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                     break;
                 case ("pick"):
                     if (parts.length < 3) {
-                        respond(event, ".quote search requires a query");
+                        respond(event, ".quote pick requires a query");
                         return;
                     }
                     if (parts[2].length() > 1) {
                         ArrayList<Integer> listQuotes = minder.searchQuote(parts, channel, server);
                         if (listQuotes != null) {
                             if (listQuotes.size() > 0) {
-                                quote = minder.getQuote(listQuotes[new Random().nextInt(listQuotes.size())], channel, server);
+                                quote = minder.getQuote(listQuotes.get(new Random().nextInt(listQuotes.size())), channel, server);
                                 respond(event, "#" + quote.getQuoteID() + " | Submitted: " + quote.getAuthor() + " | Date: " + quote.getTimestamp().toString());
                                 respond(event, "" + quote.getQuote());
                             } else {
