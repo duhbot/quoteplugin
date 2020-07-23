@@ -237,6 +237,7 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                     } else {
                         respond(event, "Too short of a string to search for!");
                     }
+                    break;
                 case ("last"):
                     if (parts.length > 2 && parts[2].equalsIgnoreCase("all")) {
                         quote = minder.getLastQuote();
