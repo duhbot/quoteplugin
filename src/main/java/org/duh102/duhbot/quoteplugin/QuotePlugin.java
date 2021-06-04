@@ -265,7 +265,7 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                     } catch (NumberFormatException nfe) {
                         respond(event, ".quote over requires a number as a lower bound");
                     }
-                    if (over > minder.getNumQuotes(channel)) {
+                    if (over > minder.getNumQuotes()) {
                         respond(event, ".quote over can't deal with a lower bound that's larger than the total number of quotes");
                         return;
                     }
@@ -313,7 +313,7 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                     } catch (NumberFormatException nfe) {
                         respond(event, ".quote between requires two numbers between 0 and the total number of quotes");
                     }
-                    if (lower < 0 || upper > minder.getNumQuotes(channel)) {
+                    if (lower < 0 || upper > minder.getNumQuotes()) {
                         respond(event, ".quote between requires two numbers between 0 and the total number of quotes");
                     }
                     quote = minder.getQuoteBetween(channel, false, lower, upper);

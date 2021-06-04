@@ -267,7 +267,7 @@ public class QuoteDB {
                 if (!all) {
                     retrieveCode += "channel = ? and ";
                 }
-                retrieveCode += "id > ? and id < ? and timestamp > 0 ORDER BY RANDOM() LIMIT 1";
+                retrieveCode += "quoteid > ? and quoteid <= ? and timestamp > 0 ORDER BY RANDOM() LIMIT 1";
                 PreparedStatement prep = conn.prepareStatement(retrieveCode);
                 int arg = 1;
                 if (!all) {

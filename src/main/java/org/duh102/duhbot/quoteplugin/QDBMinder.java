@@ -36,7 +36,7 @@ public class QDBMinder {
     }
 
     public synchronized Quote getQuoteOver(String channel, boolean all, int lowerBound) {
-        return QuoteDB.getQuoteBetween(channel, all, lowerBound, getNumQuotes(channel));
+        return QuoteDB.getQuoteBetween(channel, all, lowerBound, getNumQuotes());
     }
 
     public synchronized Quote getQuoteUnder(String channel, boolean all, int upperBound) {
