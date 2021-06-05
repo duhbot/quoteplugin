@@ -184,7 +184,7 @@ public class QuoteDB {
                 String quote = "";
                 String author = "";
                 java.sql.Timestamp timestamp = null;
-                if(rs.isClosed()) {
+                if (rs.isClosed()) {
                     return null;
                 }
                 gQuoteID = rs.getInt("quoteid");
@@ -237,6 +237,53 @@ public class QuoteDB {
                 quote = rs.getString("quote");
                 author = rs.getString("author");
                 timestamp = new java.sql.Timestamp(rs.getLong("timestamp"));
+                rs.close();
+                if (gQuoteID > -1) {
+                    return new Quote(gQuoteID, gChannel, gServer, quote, author, timestamp);
+                } else {
+                    return null;
+                }
+            } catch (java.sql.SQLException sqle) {
+                sqle.printStackTrace();
+                return null;
+            } finally {
+                try {
+                    conn.close();
+                } catch (java.sql.SQLException sqle) {
+                    sqle.printStackTrace();
+                    return null;
+                }
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static Quote getQuoteBetween(String channel, boolean all, int lowerBound, int upperBound) {
+        Connection conn = getDBConnection();
+        if (conn != null) {
+            try {
+                String retrieveCode = "SELECT * FROM quote where ";
+                if (!all) {
+                    retrieveCode += "channel = ? and ";
+                }
+                retrieveCode += "quoteid > ? and quoteid <= ? and timestamp > 0 ORDER BY RANDOM() LIMIT 1";
+                PreparedStatement prep = conn.prepareStatement(retrieveCode);
+                int arg = 1;
+                if (!all) {
+                    prep.setString(arg, channel);
+                    arg++;
+                }
+                prep.setInt(arg, lowerBound);
+                arg++;
+                prep.setInt(arg, upperBound);
+                ResultSet rs = prep.executeQuery();
+                int gQuoteID = rs.getInt("quoteid");
+                String gChannel = rs.getString("channel");
+                String gServer = rs.getString("server");
+                String quote = rs.getString("quote");
+                String author = rs.getString("author");
+                java.sql.Timestamp timestamp = new java.sql.Timestamp(rs.getLong("timestamp"));
                 rs.close();
                 if (gQuoteID > -1) {
                     return new Quote(gQuoteID, gChannel, gServer, quote, author, timestamp);

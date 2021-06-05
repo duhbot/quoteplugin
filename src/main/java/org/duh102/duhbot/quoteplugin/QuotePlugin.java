@@ -36,6 +36,9 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
         helpFunctions.put(".quote pick [query]", "like search, but immediately outputs a random quote from the search results");
         helpFunctions.put(".quote last", "read the most recent quote");
         helpFunctions.put(".quote last all", "read the most recent quote from all channels");
+        helpFunctions.put(".quote over [x]", "like pick, but limited to quotes with id over specified number");
+        helpFunctions.put(".quote under [x]", "like pick, but limited to quotes with id under specified number");
+        helpFunctions.put(".quote between [x] [y]", "like pick, but limited to quotes with id between specified numbers");
 
         return helpFunctions;
     }
@@ -81,7 +84,7 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                     }
                     StringBuilder builder = new StringBuilder(parts[2]);
                     for (int i = 3; i < parts.length; i++) {
-                        builder.append(" " + parts[i]);
+                        builder.append(" ").append(parts[i]);
                     }
                     int id = -1;
                     String toAdd = builder.toString();
@@ -97,7 +100,7 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                     if (parts.length > 2 && parts[2].equalsIgnoreCase("all")) {
                         count = minder.getNumQuotes();
                     } else {
-                        count = minder.getNumQuotes(channel, server);
+                        count = minder.getNumQuotes(channel);
                     }
                     if (count > 0) {
                         respond(event, "There are " + count + " quotes in the database.");
@@ -251,13 +254,83 @@ public class QuotePlugin extends ListenerAdapter implements ListeningPlugin {
                         respond(event, "Could not retrieve quote!");
                     }
                     break;
+                case ("over"):
+                    if (parts.length < 3) {
+                        respond(event, ".quote over requires a number as a lower bound");
+                        return;
+                    }
+                    Integer over = null;
+                    try {
+                        over = Integer.parseInt(parts[2]);
+                    } catch (NumberFormatException nfe) {
+                        respond(event, ".quote over requires a number as a lower bound");
+                    }
+                    if (over > minder.getNumQuotes()) {
+                        respond(event, ".quote over can't deal with a lower bound that's larger than the total number of quotes");
+                        return;
+                    }
+                    quote = minder.getQuoteOver(channel, false, over);
+                    if (quote != null) {
+                        respond(event, "#" + quote.getQuoteID() + " | Submitted: " + quote.getAuthor() + " | Date: " + quote.getTimestamp().toString());
+                        respond(event, "" + quote.getQuote());
+                    } else {
+                        respond(event, "Could not retrieve quote!");
+                    }
+                    break;
+                case ("under"):
+                    if (parts.length < 3) {
+                        respond(event, ".quote under requires a number as an upper bound");
+                        return;
+                    }
+                    Integer under = null;
+                    try {
+                        under = Integer.parseInt(parts[2]);
+                    } catch (NumberFormatException nfe) {
+                        respond(event, ".quote under requires a number as an upper bound");
+                    }
+                    if (under <= 1) {
+                        respond(event, ".quote under requires an upper bound that is larger than 1");
+                        return;
+                    }
+                    quote = minder.getQuoteUnder(channel, false, under);
+                    if (quote != null) {
+                        respond(event, "#" + quote.getQuoteID() + " | Submitted: " + quote.getAuthor() + " | Date: " + quote.getTimestamp().toString());
+                        respond(event, "" + quote.getQuote());
+                    } else {
+                        respond(event, "Could not retrieve quote!");
+                    }
+                    break;
+                case ("between"):
+                    if (parts.length < 4) {
+                        respond(event, ".quote between requires both a lower and an upper bound");
+                        return;
+                    }
+                    Integer lower = null;
+                    Integer upper = null;
+                    try {
+                        lower = Integer.parseInt(parts[2]);
+                        upper = Integer.parseInt(parts[3]);
+                    } catch (NumberFormatException nfe) {
+                        respond(event, ".quote between requires two numbers between 0 and the total number of quotes");
+                    }
+                    if (lower < 0 || upper > minder.getNumQuotes()) {
+                        respond(event, ".quote between requires two numbers between 0 and the total number of quotes");
+                    }
+                    quote = minder.getQuoteBetween(channel, false, lower, upper);
+                    if (quote != null) {
+                        respond(event, "#" + quote.getQuoteID() + " | Submitted: " + quote.getAuthor() + " | Date: " + quote.getTimestamp().toString());
+                        respond(event, "" + quote.getQuote());
+                    } else {
+                        respond(event, "Could not retrieve quote!");
+                    }
+                    break;
                 default:
                     Integer num = null;
                     try {
                         num = Integer.parseInt(parts[1]);
                     } catch (NumberFormatException nfe) {
                     }
-                    if(num == null) {
+                    if (num == null) {
                         respond(event, String.format("Unknown quote command %s", parts[1]));
                         return;
                     }
